@@ -1,0 +1,23 @@
+.reveal pre {
+    box-shadow: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.reveal pre code {
+    padding:0px;
+}
+
+.reveal h1 {
+    font-size: 3.6em;
+}
+
+.reveal ul {
+    list-style-type: none;
+    line-height: 1.5em;
+    font-size: 120%;
+}
+
+.dim {
+    opacity: 0.2;
+}

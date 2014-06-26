@@ -15,9 +15,26 @@
 .reveal ul {
     list-style-type: none;
     line-height: 1.5em;
-    font-size: 120%;
+    font-size: 1.8em;
+    width: 1000px;
 }
 
 .dim {
     opacity: 0.2;
+}
+
+.reveal table {
+    font-size: 2em;
+    line-height: 2.5em;
+}
+
+.reveal table td {
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+#meta-ex-quote {
+    color: #F9EBCF;
+    position:relative;
+    top: 200px;
 }

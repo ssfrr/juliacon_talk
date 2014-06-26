@@ -1,7 +1,7 @@
 default: index.html
 
 %.html: %.md reveal.js Makefile custom.css template.html
-	pandoc -trevealjs -Vtheme=sky -Vtransition=none --template=template.html --css=custom.css --standalone -o$@ $<
+	pandoc -trevealjs -Vtheme=simple -Vtransition=none --template=template.html --css=custom.css --standalone --slide-level=1 -o$@ $<
 
 reveal.js:
 	git submodule init

@@ -14,18 +14,24 @@
     font-size: 2.5em;
 }
 
+.reveal .mediumcode {
+    font-size: 1.8em;
+}
+
 .reveal h1 {
     font-size: 3.6em;
 }
 
 .reveal ul {
     list-style-type: none;
-}
-
-.reveal .biglist ul {
     line-height: 1.5em;
     font-size: 1.8em;
     width: 1000px;
+}
+
+.reveal .smalllist ul {
+    line-height: 1.5em;
+    font-size: 1.0em;
 }
 
 .dim {

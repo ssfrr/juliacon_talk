@@ -31,6 +31,8 @@
     * +, *
 * main methods
     * play
+    * stop
+    * af_open
 * challenges
     * Garbage Collection!
 

@@ -69,35 +69,27 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-<div class="biglist">
 * CSound
 
 > * C/C++
-</div>
 
 ---
 
-<div class="biglist">
 * Max/MSP, PD
 
 > * C/C++
-</div>
 
 ---
 
-<div class="biglist">
 * SuperCollider
 
 > * C++
-</div>
 
 ---
 
-<div class="biglist">
 * Clojure (Overtone)
 
 > * C++
-</div>
 
 <div class="notes">
 * I'm sure you're seeing a pattern here
@@ -105,11 +97,9 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-<div class="biglist">
 * Julia
 
 > * Julia
-</div>
 
 ---
 
@@ -117,11 +107,21 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-## AudioIO.jl Tour
+## AudioIO.jl
+
+<div class="notes">
+* Contributions from Howard Mao on File I/O
+* Joris Kraak for audio Input
+</div>
+---
+
+# Exported Functions
 
 ---
 
-# play
+## af_open
+## play
+## stop
 
 <div class="notes">
 * Try to think in terms of conceptual methods
@@ -342,6 +342,11 @@ multi-core and fully hyper-threaded."</p>
     ...
 </div>
 
+<div class="notes">
+* I'm considering having the render function take the output buffer as an arg
+* then it would need to return the number of samples copied
+</div>
+
 ---
 
 <div class="dim">
@@ -408,14 +413,20 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-<div class="bigcode">
+<div class="mediumcode">
     SinOsc(440)
 </div>
 
 ---
 
-<div class="bigcode">
-    SinOsc(SinOsc(440))
+<div class="mediumcode">
+    SinOsc(SinOsc(2))
+</div>
+
+---
+
+<div class="mediumcode">
+    SinOsc(SinOsc(2) * 10 + 440)
 </div>
 
 ---
@@ -441,7 +452,17 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-# DEMO
+# Challenges
+
+<div class="notes">
+* garbage Collection
+* incgc branch from Oscar Blumberg is awesome! Can't wait for 0.4
+* Global variables from the REPL are problematic
+</div>
+
+---
+
+# Demo
 
 ---
 
@@ -458,6 +479,8 @@ multi-core and fully hyper-threaded."</p>
 ---
 
 ## Future Work
+<div class="smalllist">
+
 > * More Nodes!
 > * lower latency
 > * multi-channel
@@ -466,3 +489,5 @@ multi-core and fully hyper-threaded."</p>
 > * sequencing abstractions
 > * better error handling
 > * common utility functions
+
+</div>

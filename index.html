@@ -109,63 +109,39 @@
 </section>
 <section class="slide level1">
 
-<div class="biglist">
 <ul>
 <li>CSound</li>
 </ul>
-<blockquote>
 <ul>
-<li>C/C++</li>
+<li class="fragment">C/C++</li>
 </ul>
-</div>
-
-
-</blockquote>
 </section>
 <section class="slide level1">
 
-<div class="biglist">
 <ul>
 <li>Max/MSP, PD</li>
 </ul>
-<blockquote>
 <ul>
-<li>C/C++</li>
+<li class="fragment">C/C++</li>
 </ul>
-</div>
-
-
-</blockquote>
 </section>
 <section class="slide level1">
 
-<div class="biglist">
 <ul>
 <li>SuperCollider</li>
 </ul>
-<blockquote>
 <ul>
-<li>C++</li>
+<li class="fragment">C++</li>
 </ul>
-</div>
-
-
-</blockquote>
 </section>
 <section class="slide level1">
 
-<div class="biglist">
 <ul>
 <li>Clojure (Overtone)</li>
 </ul>
-<blockquote>
 <ul>
-<li>C++</li>
+<li class="fragment">C++</li>
 </ul>
-</div>
-
-
-</blockquote>
 <aside class="notes">
 <ul>
 <li>I'm sure you're seeing a pattern here</li>
@@ -174,28 +150,34 @@
 </section>
 <section class="slide level1">
 
-<div class="biglist">
 <ul>
 <li>Julia</li>
 </ul>
-<blockquote>
 <ul>
-<li>Julia</li>
+<li class="fragment">Julia</li>
 </ul>
-</div>
-
-
-</blockquote>
 </section>
 <section id="section-5" class="slide level1" data-background="images/basset1.jpg">
 <h1></h1>
 </section>
 <section class="slide level1">
 
-<h2 id="audioio.jl-tour">AudioIO.jl Tour</h2>
+<h2 id="audioio.jl">AudioIO.jl</h2>
+<aside class="notes">
+<ul>
+<li>Contributions from Howard Mao on File I/O</li>
+<li>Joris Kraak for audio Input</li>
+</ul>
+</aside>
 </section>
-<section id="play" class="slide level1">
-<h1>play</h1>
+<section id="exported-functions" class="slide level1">
+<h1>Exported Functions</h1>
+</section>
+<section class="slide level1">
+
+<h2 id="af_open">af_open</h2>
+<h2 id="play">play</h2>
+<h2 id="stop">stop</h2>
 <aside class="notes">
 <ul>
 <li>Try to think in terms of conceptual methods</li>
@@ -422,6 +404,12 @@ function render(node::MixRenderer,
                 info::DeviceInfo)
 ...</code></pre>
 </div>
+<aside class="notes">
+<ul>
+<li>I'm considering having the render function take the output buffer as an arg</li>
+<li>then it would need to return the number of samples copied</li>
+</ul>
+</aside>
 </section>
 <section class="slide level1">
 
@@ -489,14 +477,20 @@ _</code></pre>
 </section>
 <section class="slide level1">
 
-<div class="bigcode">
+<div class="mediumcode">
 <pre><code>SinOsc(440)</code></pre>
 </div>
 </section>
 <section class="slide level1">
 
-<div class="bigcode">
-<pre><code>SinOsc(SinOsc(440))</code></pre>
+<div class="mediumcode">
+<pre><code>SinOsc(SinOsc(2))</code></pre>
+</div>
+</section>
+<section class="slide level1">
+
+<div class="mediumcode">
+<pre><code>SinOsc(SinOsc(2) * 10 + 440)</code></pre>
 </div>
 </section>
 <section class="slide level1">
@@ -520,8 +514,18 @@ end</code></pre>
         device_input::AudioBuf,
         info::DeviceInfo)</code></pre>
 </section>
+<section id="challenges" class="slide level1">
+<h1>Challenges</h1>
+<aside class="notes">
+<ul>
+<li>garbage Collection</li>
+<li>incgc branch from Oscar Blumberg is awesome! Can't wait for 0.4</li>
+<li>Global variables from the REPL are problematic</li>
+</ul>
+</aside>
+</section>
 <section id="demo" class="slide level1">
-<h1>DEMO</h1>
+<h1>Demo</h1>
 </section>
 <section id="section-7" class="slide level1" data-background="images/manta.jpg">
 <h1></h1>
@@ -535,6 +539,7 @@ end</code></pre>
 <section class="slide level1">
 
 <h2 id="future-work">Future Work</h2>
+<div class="smalllist">
 <ul>
 <li class="fragment">More Nodes!</li>
 <li class="fragment">lower latency</li>
@@ -545,6 +550,7 @@ end</code></pre>
 <li class="fragment">better error handling</li>
 <li class="fragment">common utility functions</li>
 </ul>
+</div>
 </section>
     </div>
   </div>

@@ -42,6 +42,7 @@
     * music thoeory library (notes, chords, intervals)
     * sequencing abstractions
     * better error handling (audio task shouldn't crash)
+    * common utility functions (table lookup, interpolation)
 
 * optimization lessons
     * mathconsts allocate!

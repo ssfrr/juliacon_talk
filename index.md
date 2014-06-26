@@ -2,6 +2,15 @@
 % Spencer Russell; MIT Media Lab
 % 2014-06-26
 
+# How I Met Julia
+
+<div class="notes">
+* press 's' to pull up speaker notes
+* introduced to Julia by Angel Pizarro in June 2012 at Philly Lambda
+</div>
+
+---
+
 # Some History
 
 ---
@@ -60,27 +69,35 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
+<div class="biglist">
 * CSound
 
 > * C/C++
+</div>
 
 ---
 
+<div class="biglist">
 * Max/MSP, PD
 
 > * C/C++
+</div>
 
 ---
 
+<div class="biglist">
 * SuperCollider
 
 > * C++
+</div>
 
 ---
 
+<div class="biglist">
 * Clojure (Overtone)
 
 > * C++
+</div>
 
 <div class="notes">
 * I'm sure you're seeing a pattern here
@@ -88,10 +105,15 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
+<div class="biglist">
 * Julia
 
 > * Julia
+</div>
 
+---
+
+# {data-background="images/basset1.jpg"}
 
 ---
 
@@ -99,7 +121,327 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-# af_open
+# play
+
+<div class="notes">
+* Try to think in terms of conceptual methods
+* In python you need different function names or a chain of "isinstance"
+* don't add more methods than you have to
+</div>
+
+---
+
+    arr = my_synth_alg()::Array{Float32}
+    play(arr)
+
+<div class="notes">
+* Keeping this sort of use case simple is a big driving factor in AudioIO
+* This is playing an array in native sample format
+* What about playing an array in a different format?
+</div>
+
+---
+
+    arr = my_synth_alg()::Array{Int16}
+    play(arr)
+
+<div class="notes">
+* what is this wizardry?
+* the magic of multiple dispatch!
+* let's see how playing a Signed Int array is implemented
+</div>
+
+---
+
+    function play{T <: Signed}(arr::Array{T}, args...)
+        arr = arr / typemax(T)
+        play(arr, args...)
+    end
+
+<div class="notes">
+* we're just converting to a float array and playing that
+* what happens when we play a float array?
+</div>
+
+---
+
+    function play(arr::AudioBuf, args...)
+        player = ArrayPlayer(arr)
+        play(player, args...)
+    end
+
+<div class="notes">
+* here we start to see some of the meat of AudioIO
+* we create AudioNodes and play them
+* how to audio nodes get played?
+</div>
+
+---
+
+    function play(node::AudioNode)
+        global _stream
+        if _stream == nothing
+            _stream = PortAudioStream()
+        end
+        play(node, _stream)
+    end
+
+<div class="notes">
+* a stream is just a render tree and background task
+</div>
+
+---
+
+    function play(node::AudioNode, stream::AudioStream)
+        push!(stream.root, node)
+        return node
+    end
+
+<div class="notes">
+* here we get to the root of the play function
+* we just add it to the render tree and return
+* at every render block, N frames will be pulled from the AudioNode
+* What other AudioNodes are there?
+</div>
+
+---
+
+<div class="bigcode">
+    play(SinOsc(440))
+</div>
+
+---
+
+<div class="bigcode">
+    play(WhiteNoise())
+</div>
+
+<div class="notes">
+* what is an AudioNode?
+</div>
+
+---
+
+# {data-background="images/basset2.jpg"}
+
+---
+
+    type AudioNode{T<:AudioRenderer}
+        active::Bool
+        end_cond::Condition
+        renderer::T
+        AudioNode(renderer::AudioRenderer) =
+                new(true, Condition(), renderer)
+        AudioNode(args...) = AudioNode{T}(T(args...))
+    end
+
+<div class="notes">
+* this is not the first iteration of this type
+* I started with AudioNode being an abstract type
+* but then I needed fields!
+</div>
+
+---
+
+<div class="dim">
+    type AudioNode{T<:AudioRenderer}
+</div>
+        active::Bool
+        end_cond::Condition
+<div class="dim">
+        renderer::T
+        AudioNode(renderer::AudioRenderer) =
+                new(true, Condition(), renderer)
+        AudioNode(args...) = AudioNode{T}(T(args...))
+    end
+</div>
+
+---
+
+<div class="dim">
+    type AudioNode{T<:AudioRenderer}
+        active::Bool
+        end_cond::Condition
+</div>
+        renderer::T
+<div class="dim">
+        AudioNode(renderer::AudioRenderer) =
+                new(true, Condition(), renderer)
+        AudioNode(args...) = AudioNode{T}(T(args...))
+    end
+</div>
+
+---
+
+<div class="dim">
+    type AudioNode{T<:AudioRenderer}
+        active::Bool
+        end_cond::Condition
+        renderer::T
+</div>
+        AudioNode(renderer::AudioRenderer) =
+                new(true, Condition(), renderer)
+<div class="dim">
+        AudioNode(args...) = AudioNode{T}(T(args...))
+    end
+</div>
+
+---
+
+<div class="dim">
+    type AudioNode{T<:AudioRenderer}
+        active::Bool
+        end_cond::Condition
+        renderer::T
+        AudioNode(renderer::AudioRenderer) =
+                new(true, Condition(), renderer)
+</div>
+        AudioNode(args...) = AudioNode{T}(T(args...))
+<div class="dim">
+    end
+</div>
+
+---
+
+    type MixRenderer <: AudioRenderer
+        inputs::Vector{AudioNode}
+        buf::AudioBuf
+
+        MixRenderer(inputs) = new(inputs, AudioSample[])
+        MixRenderer() = MixRenderer(AudioNode[])
+    end
+
+    typealias AudioMixer AudioNode{MixRenderer}
+    export AudioMixer
+
+    function render(node::MixRenderer,
+                    device_input::AudioBuf,
+                    info::DeviceInfo)
+    ...
+
+
+---
+
+<div class="dim">
+    type MixRenderer <: AudioRenderer
+</div>
+        inputs::Vector{AudioNode}
+        buf::AudioBuf
+<div class="dim">
+        _
+        MixRenderer(inputs) = new(inputs, AudioSample[])
+        MixRenderer() = MixRenderer(AudioNode[])
+    end
+
+    typealias AudioMixer AudioNode{MixRenderer}
+    export AudioMixer
+
+    function render(node::MixRenderer,
+                    device_input::AudioBuf,
+                    info::DeviceInfo)
+    ...
+</div>
+
+---
+
+<div class="dim">
+    type MixRenderer <: AudioRenderer
+        inputs::Vector{AudioNode}
+        buf::AudioBuf
+        _
+</div>
+        MixRenderer(inputs) = new(inputs, AudioSample[])
+        MixRenderer() = MixRenderer(AudioNode[])
+<div class="dim">
+    end
+
+    typealias AudioMixer AudioNode{MixRenderer}
+    export AudioMixer
+
+    function render(node::MixRenderer,
+                    device_input::AudioBuf,
+                    info::DeviceInfo)
+    ...
+</div>
+
+---
+
+<div class="dim">
+    type MixRenderer <: AudioRenderer
+        inputs::Vector{AudioNode}
+        buf::AudioBuf
+
+        MixRenderer(inputs) = new(inputs, AudioSample[])
+        MixRenderer() = MixRenderer(AudioNode[])
+    end
+    _
+</div>
+    typealias AudioMixer AudioNode{MixRenderer}
+    export AudioMixer
+<div class="dim">
+    _
+    function render(node::MixRenderer,
+                    device_input::AudioBuf,
+                    info::DeviceInfo)
+    ...
+</div>
+
+---
+
+<div class="dim">
+    type MixRenderer <: AudioRenderer
+        inputs::Vector{AudioNode}
+        buf::AudioBuf
+
+        MixRenderer(inputs) = new(inputs, AudioSample[])
+        MixRenderer() = MixRenderer(AudioNode[])
+    end
+
+    typealias AudioMixer AudioNode{MixRenderer}
+    export AudioMixer
+    _
+</div>
+    function render(node::MixRenderer,
+                    device_input::AudioBuf,
+                    info::DeviceInfo)
+    ...
+
+---
+
+<div class="bigcode">
+    SinOsc(440)
+</div>
+
+---
+
+<div class="bigcode">
+    SinOsc(SinOsc(440))
+</div>
+
+---
+
+    type SinOscRenderer{
+            T<:Union(Float32, AudioNode)} <: AudioRenderer
+        freq::T
+        phase::Float32
+        buf::AudioBuf
+    end
+
+---
+
+    function render(node::SinOscRenderer{Float32},
+            device_input::AudioBuf,
+            info::DeviceInfo)
+
+---
+
+    function render(node::SinOscRenderer{AudioNode},
+            device_input::AudioBuf,
+            info::DeviceInfo)
+
+---
+
+# DEMO
 
 ---
 
@@ -115,27 +457,12 @@ multi-core and fully hyper-threaded."</p>
 
 ---
 
-<div class="dim">
-    {
-      "name": "MIT Media Lab"
-</div>
-      "_links": {
-<div class="dim">
-        "self": {
-          "href": "http://chain-api.media.mit.edu/sites/5"
-        },
-        "siteSummary": {
-          "href": "http://chain-api.media.mit.edu/sites/5/summary",
-          "title": "Summary"
-        },
-        "devices": {
-          "href": "http://chain-api.media.mit.edu/devices/?site_id=5",
-          "title": "Devices"
-        }
-</div>
-      }
-<div class="dim">
-    }
-</div>
-
----
+## Future Work
+> * More Nodes!
+> * lower latency
+> * multi-channel
+> * easier install
+> * music thoeory library
+> * sequencing abstractions
+> * better error handling
+> * common utility functions

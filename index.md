@@ -15,6 +15,10 @@
 
 ---
 
+# {data-background="images/PatchedCabinets.jpg"}
+
+---
+
 # {data-background="images/max_mathews_L_rosler_graphic1_1967.jpg"}
 
 <div class="notes">
@@ -485,7 +489,7 @@ multi-core and fully hyper-threaded."</p>
 > * lower latency
 > * multi-channel
 > * easier install
-> * music thoeory library
+> * music theory library
 > * sequencing abstractions
 > * better error handling
 > * common utility functions

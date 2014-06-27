@@ -487,6 +487,7 @@ multi-core and fully hyper-threaded."</p>
 
 > * More Nodes!
 > * lower latency
+> * reduce allocation and JIT
 > * multi-channel
 > * easier install
 > * music theory library

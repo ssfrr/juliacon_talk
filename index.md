@@ -1,5 +1,5 @@
 % AudioIO.jl
-% Spencer Russell; MIT Media Lab
+% Spencer Russell; MIT Media Lab; @ssfrr
 % 2014-06-26
 
 # How I Met Julia

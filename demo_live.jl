@@ -1,5 +1,8 @@
 using AudioIO
 
+# adding synth
+vox(note::Real) = play(SinOsc(SinOsc(30)*100+note) * LinRamp(1, 0, 0.3) + WhiteNoise() * LinRamp(1, 0, 0.01));
+
 # Using Map to play lists of AudioNodes
 ss = [SinOsc(SinOsc(LinRamp(1, fmax, 20))*100 + 440) for fmax in [200, 205, 210, 215, 220]];
 map(play, ss);
@@ -7,8 +10,8 @@ map(play, ss);
 # Reading Files
 amen = af_open("audio/24940__vexst__the-winstons-amen-brother-full-solo-4-bars-mono.wav");
 data = read(amen);
-play(data)
-play(reverse(data))
+play(data);
+play(reverse(data));
 
 # beat slicing
 data_pad = vcat(data, zeros(Int16, length(data)%32));
@@ -45,11 +48,11 @@ function AudioIO.stop(seq::FuncSeq)
     seq.stopped = true
 end
 
-# playing drums
-play_slice(idx::Int) = play(beats[:, idx])
-drumseq = FuncSeq(play_slice, [1:16], ones(16)*0.2)
-play(drumseq)
-stop(drumseq)
+mtof(note::Real) = 440 * 2^((note - 69)/12);
 
-# adding synth
-vox(note::Real) = play(SinOsc(SinOsc(30)*100+note) * LinRamp(1, 0, 2) + WhiteNoise() * LinRamp(1, 0, 0.01))
+# playing drums
+play_slice(idx::Int) = play(beats[:, idx]);
+drumseq = FuncSeq(play_slice, [1:16], ones(16)*0.2);
+synth = FuncSeq(vox, map(mtof, [60, 60, 72, 60, 60, 55]), [1, 1, 1, 1, 2, 2] * 0.2)
+play(drumseq);
+stop(drumseq);
